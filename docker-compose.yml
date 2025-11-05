@@ -1,0 +1,74 @@
+
+services:
+  app:
+    build: .
+    container_name: Apps
+    restart: always
+    tty: true
+    stdin_open: true
+    networks:
+      - prueba
+      - mongo
+    volumes:
+      - ./appFlask:/home/ubuntu/apps
+    ports:
+      - "5000:5000"
+  db:
+    image: mysql:latest
+    container_name: BaseMysql
+
+    restart: always
+
+    ports:
+      - "3306:3306"
+
+    environment:
+      MYSQL_USER: tocino
+      MYSQL_ROOT_PASSWORD: tocinacio
+      MYSQL_DATABASE: loginapp
+      
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+    networks:
+      - prueba
+  mongodb:
+    image: mongo:latest
+    container_name: BaseMongo
+    restart: always
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=example
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb_data:/data/db
+    networks:
+      - mongo
+  prometheus:
+    image: prom/prometheus
+    container_name: PrometheusM
+    restart: always
+    volumes:
+      - ./prometheus:/etc/prometheus/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - prueba
+
+  grafana:
+    image: grafana/grafana
+    container_name: GrafanaM
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=tocino
+    networks:
+      - prueba
+  
+
+networks:
+  prueba:
+  mongo:

@@ -1,0 +1,6 @@
+Flask
+Flask-MySQLdb
+reportlab
+pymongo
+werkzeug
+mysqlclient
